@@ -3,24 +3,36 @@
               [neko.debug :refer [*a]]
               [neko.notify :refer [toast]]
               [neko.find-view :refer [find-view]]
-              [neko.threading :refer [on-ui]])
+              [neko.threading :refer [on-ui]]
+              [clojure.java.io :as io]
+              [clj-http.lite.client :as client])
   (:import com.benbrittain.petrarch.GPSbackground)
   (:import android.widget.TextView)
-  (:import [android.location LocationManager]
-           [android.content Context]))
+  (:import [android.content Context]))
 
+(defn send-chunk [a-chunk]
+  (let [body (pr-str (assoc {} :coords a-chunk))]
+    (def resp
+      (future (client/post "http://10.0.0.6:3000/api/routes/"
+                           {:body body
+                            :content-type :edn
+                            :socket-timeout 1000
+                            :conn-timeout 1000
+                            :accept :edn})))))
 
 (defn send-data [activity]
-  (let [^TextView input (.getText (find-view activity ::secret-key))]
-    (toast activity
-           (if (empty? input)
-             "Please enter the secret-key"
-             (str "secret key: " input))
-           :long)))
+  (let [^TextView input (.getText (find-view activity ::secret-key))
+        coords (read-gps-csv)]
+    (do
+      (doall
+        (map #(send-chunk %)
+             (partition-all 20 data)))
+      (toast activity
+             "sent data"
+             :long))))
 
 (defn start-background-gps [context activity]
   (let [^TextView input (.getText (find-view activity ::secret-key))
-        ^LocationManager location-manager (.getSystemService context Context/LOCATION_SERVICE)
         intent (android.content.Intent.)]
     (.setClassName intent context "com.benbrittain.petrarch.GPSbackground")
     (.startService context intent)
