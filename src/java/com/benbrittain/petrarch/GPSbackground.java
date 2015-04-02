@@ -24,7 +24,7 @@ public class GPSbackground extends Service {
     private LocationManager locationManager;
     private String provider;
     LocationListener mlocListener;
-    private String FILENAME = "gpsdata.csv";
+    private String FILENAME = "gpsdata.edn";
 
     FileOutputStream fos;
 
@@ -68,12 +68,12 @@ public class GPSbackground extends Service {
             String altitude  = Double.toString(loc.getAltitude());
             String accuracy  = Float.toString(loc.getAccuracy());
             String speed     = Float.toString(loc.getSpeed());
-            String data      = time + ", " +
-                               longitude + ", " +
-                               latitude  + ", " +
-                               altitude  + ", " +
-                               accuracy  + ", " +
-                               speed     + "\n" ;					;
+            String data      = "{" + " :time " + time +
+                                     " :long " + longitude +
+                                     " :lat " + latitude +
+                                     " :alt " + altitude +
+                                     " :acc " + accuracy +
+                                     " :speed " + speed + " } \n";
             try {
                 fos.write(data.getBytes());
             } catch (IOException e) {
