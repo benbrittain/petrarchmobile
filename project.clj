@@ -14,6 +14,7 @@
 
   :dependencies [[org.clojure-android/clojure "1.7.0-alpha6" :use-resources true]
                  [neko/neko "3.2.0-preview3"]
+                 [org.clojure/data.csv "0.1.2"]
                  [clj-http-lite/clj-http-lite "0.2.2-SNAPSHOT"]]
   :profiles {:default [:dev]
 
