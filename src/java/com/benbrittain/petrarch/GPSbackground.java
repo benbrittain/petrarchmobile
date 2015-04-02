@@ -44,7 +44,7 @@ public class GPSbackground extends Service {
             e.printStackTrace();
         }
         mlocListener = new MyLocationListener();
-        locationManager.requestLocationUpdates(provider, 10, 0, mlocListener);
+        locationManager.requestLocationUpdates(provider, 3000, 0, mlocListener);
     }
 
     @Override
